@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .pdf-list {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .pdf-item {
+      background-color: white;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .pdf-item:hover {
+      background-color: #e6f0ff;
+    }
+
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+      display: none;
+    }
+
+    #back-button {
+      display: none;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+
+  <header>
+    <h1>PDF Library</h1>
+  </header>
+
+  <div class="pdf-list" id="pdfList">
+    <div class="pdf-item" onclick="loadPDF('viewer/file1.pdf')">Python Notes</div>
+    <div class="pdf-item" onclick="loadPDF('viewer/file2.pdf')">AI & ML Guide</div>
+    <div class="pdf-item" onclick="loadPDF('viewer/file3.pdf')">Control Systems Summary</div>
+  </div>
+
+  <button id="back-button" onclick="goBack()">← Back to List</button>
+
+  <iframe id="pdfFrame"></iframe>
+
+  <script>
+    function loadPDF(pdfUrl) {
+      const frame = document.getElementById("pdfFrame");
+      const list = document.getElementById("pdfList");
+      const back = document.getElementById("back-button");
+
+      frame.src = `https://docs.google.com/gview?url=https://<yourusername>.github.io/<repo-name>/` + pdfUrl + `&embedded=true`;
+      frame.style.display = "block";
+      list.style.display = "none";
+      back.style.display = "block";
+    }
+
+    function goBack() {
+      document.getElementById("pdfFrame").style.display = "none";
+      document.getElementById("pdfList").style.display = "block";
+      document.getElementById("back-button").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
