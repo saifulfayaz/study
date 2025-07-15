@@ -1,96 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PDF Library</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Internet Speed Test - MBps</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-    }
-
-    header {
-      background-color: #0077cc;
-      color: white;
-      padding: 40px;
+      background-color: #f3f3f3;
       text-align: center;
+      padding: 50px;
     }
-
-    .pdf-list {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 0 20px;
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
-    .pdf-item {
-      background-color: white;
-      padding: 15px 20px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: 0.2s;
+    h1 {
+      margin-bottom: 20px;
     }
-
-    .pdf-item:hover {
-      background-color: #e6f0ff;
+    #result {
+      font-size: 2em;
+      color: #007bff;
+      margin: 20px 0;
     }
-
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
-      display: none;
-    }
-
-    #back-button {
-      display: none;
-      margin: 10px auto;
+    button {
       padding: 10px 20px;
-      background-color: #0077cc;
-      color: white;
+      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      border-radius: 8px;
       cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
-<body oncontextmenu="return false">
-
-  <header>
-    <h1>Saif Ul Fayaz</h1>
-  </header>
-
-  <div class="pdf-list" id="pdfList">
-    <div class="pdf-item" onclick="loadPDF('file1.pdf')">Python Notes</div>
-    <div class="pdf-item" onclick="loadPDF('file2.pdf')">AI & ML Guide</div>
-    <div class="pdf-item" onclick="loadPDF('file3.pdf')">Control Systems Summary</div>
+<body>
+  <div class="card">
+    <h1>Internet Speed Test</h1>
+    <div id="result">Testing...</div>
+    <button onclick="startTest()">Retry Test</button>
   </div>
 
-  <button id="back-button" onclick="goBack()">← Back to List</button>
-
-  <iframe id="pdfFrame"></iframe>
-
   <script>
-    function loadPDF(pdfUrl) {
-      const frame = document.getElementById("pdfFrame");
-      const list = document.getElementById("pdfList");
-      const back = document.getElementById("back-button");
+    async function startTest() {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = 'Testing...';
 
-      frame.src = `https://docs.google.com/gview?url=https://<saifulfayaz>.github.io/<study>/` + pdfUrl + `&embedded=true`;
-      frame.style.display = "block";
-      list.style.display = "none";
-      back.style.display = "block";
+      const fileSizeMB = 5; // 5 MB test file (adjust as needed)
+      const testFileUrl = "https://speed.hetzner.de/5MB.bin"; // Use a reliable test file
+
+      const startTime = new Date().getTime();
+
+      try {
+        const response = await fetch(testFileUrl, { cache: "no-store" });
+        await response.blob(); // Download the whole file
+        const endTime = new Date().getTime();
+
+        const durationSeconds = (endTime - startTime) / 1000;
+        const speedMBps = (fileSizeMB / durationSeconds).toFixed(2);
+
+        resultDiv.textContent = `Speed: ${speedMBps} MBps`;
+      } catch (error) {
+        resultDiv.textContent = 'Error testing speed';
+      }
     }
 
-    function goBack() {
-      document.getElementById("pdfFrame").style.display = "none";
-      document.getElementById("pdfList").style.display = "block";
-      document.getElementById("back-button").style.display = "none";
-    }
+    startTest();
   </script>
-
 </body>
 </html>
