@@ -3,75 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Internet Speed Test - MBps</title>
+  <title>Scientific Calculator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f3f3f3;
-      text-align: center;
-      padding: 50px;
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .card {
-      background: white;
+
+    .calculator {
+      background-color: #1e1e1e;
+      padding: 20px;
       border-radius: 15px;
-      padding: 30px;
-      display: inline-block;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      width: 350px;
     }
-    h1 {
+
+    .display {
+      width: 100%;
+      font-size: 2em;
+      padding: 10px;
+      background: #2e2e2e;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      text-align: right;
       margin-bottom: 20px;
     }
-    #result {
-      font-size: 2em;
-      color: #007bff;
-      margin: 20px 0;
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
     }
+
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      background-color: #007bff;
+      padding: 15px;
+      font-size: 1.1em;
+      background-color: #333;
       color: white;
-      border-radius: 8px;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
+      transition: 0.2s ease;
     }
+
     button:hover {
+      background-color: #444;
+    }
+
+    button.equal {
+      background-color: #007bff;
+    }
+
+    button.equal:hover {
       background-color: #0056b3;
+    }
+
+    button.clear {
+      background-color: #dc3545;
+    }
+
+    button.clear:hover {
+      background-color: #a71d2a;
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Internet Speed Test</h1>
-    <div id="result">Testing...</div>
-    <button onclick="startTest()">Retry Test</button>
+  <div class="calculator">
+    <input type="text" id="display" class="display" readonly />
+    <div class="buttons">
+      <button onclick="clearDisplay()" class="clear">C</button>
+      <button onclick="append('(')">(</button>
+      <button onclick="append(')')">)</button>
+      <button onclick="append('π')">π</button>
+      <button onclick="append('e')">e</button>
+
+      <button onclick="append('sin(')">sin</button>
+      <button onclick="append('cos(')">cos</button>
+      <button onclick="append('tan(')">tan</button>
+      <button onclick="append('^')">xʸ</button>
+      <button onclick="backspace()">←</button>
+
+      <button onclick="append('log(')">log</button>
+      <button onclick="append('ln(')">ln</button>
+      <button onclick="append('√(')">√</button>
+      <button onclick="append('/')">÷</button>
+      <button onclick="append('*')">×</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button onclick="append('-')">−</button>
+      <button onclick="append('+')">+</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+
+      <button onclick="append('3')">3</button>
+      <button onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button onclick="calculate()" class="equal">=</button>
+    </div>
   </div>
 
   <script>
-    async function startTest() {
-      const resultDiv = document.getElementById('result');
-      resultDiv.textContent = 'Testing...';
+    const display = document.getElementById("display");
 
-      const fileSizeMB = 5; // 5 MB test file (adjust as needed)
-      const testFileUrl = "https://speed.hetzner.de/5MB.bin"; // Use a reliable test file
-
-      const startTime = new Date().getTime();
-
-      try {
-        const response = await fetch(testFileUrl, { cache: "no-store" });
-        await response.blob(); // Download the whole file
-        const endTime = new Date().getTime();
-
-        const durationSeconds = (endTime - startTime) / 1000;
-        const speedMBps = (fileSizeMB / durationSeconds).toFixed(2);
-
-        resultDiv.textContent = `Speed: ${speedMBps} MBps`;
-      } catch (error) {
-        resultDiv.textContent = 'Error testing speed';
-      }
+    function append(value) {
+      if (value === 'π') value = Math.PI;
+      else if (value === 'e') value = Math.E;
+      display.value += value;
     }
 
-    startTest();
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      let expr = display.value
+        .replace(/π/g, Math.PI)
+        .replace(/e/g, Math.E)
+        .replace(/√/g, 'Math.sqrt')
+        .replace(/sin/g, 'Math.sin')
+        .replace(/cos/g, 'Math.cos')
+        .replace(/tan/g, 'Math.tan')
+        .replace(/log/g, 'Math.log10')
+        .replace(/ln/g, 'Math.log')
+        .replace(/\^/g, '**');
+
+      try {
+        let result = eval(expr);
+        display.value = result;
+      } catch (e) {
+        display.value = "Error";
+      }
+    }
   </script>
 </body>
 </html>
