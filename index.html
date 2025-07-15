@@ -6,33 +6,32 @@
   <title>Scientific Calculator</title>
   <style>
     body {
-      background-color: #121212;
-      color: #fff;
+      background-color: #f8f8f8;
       font-family: 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
 
     .calculator {
-      background-color: #1e1e1e;
+      width: 360px;
+      background: #ffffff;
+      border-radius: 20px;
       padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
-      width: 350px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
 
     .display {
       width: 100%;
-      font-size: 2em;
-      padding: 10px;
-      background: #2e2e2e;
-      border: none;
-      color: white;
-      border-radius: 10px;
+      font-size: 2rem;
       text-align: right;
-      margin-bottom: 20px;
+      padding: 20px 10px;
+      border: none;
+      background: none;
+      color: #333;
+      margin-bottom: 10px;
     }
 
     .buttons {
@@ -42,34 +41,38 @@
     }
 
     button {
-      padding: 15px;
-      font-size: 1.1em;
-      background-color: #333;
-      color: white;
+      font-size: 1.1rem;
       border: none;
-      border-radius: 10px;
+      border-radius: 50%;
+      padding: 18px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      color: #333;
       cursor: pointer;
-      transition: 0.2s ease;
+      transition: background 0.2s;
     }
 
     button:hover {
-      background-color: #444;
+      background-color: #f0f0f0;
     }
 
-    button.equal {
-      background-color: #007bff;
+    .btn-operator {
+      background-color: #a9a9a9;
+      color: white;
     }
 
-    button.equal:hover {
-      background-color: #0056b3;
+    .btn-func {
+      background-color: #d3d3d3;
     }
 
-    button.clear {
-      background-color: #dc3545;
+    .btn-equal {
+      background-color: #4CAF50;
+      color: white;
     }
 
-    button.clear:hover {
-      background-color: #a71d2a;
+    .btn-clear {
+      background-color: #f44336;
+      color: white;
     }
   </style>
 </head>
@@ -77,40 +80,44 @@
   <div class="calculator">
     <input type="text" id="display" class="display" readonly />
     <div class="buttons">
-      <button onclick="clearDisplay()" class="clear">C</button>
+      <button onclick="clearDisplay()" class="btn-clear">C</button>
       <button onclick="append('(')">(</button>
       <button onclick="append(')')">)</button>
+      <button onclick="append('^')">xʸ</button>
+      <button onclick="backspace()">⌫</button>
+
+      <button onclick="append('sin(')" class="btn-func">sin</button>
+      <button onclick="append('cos(')" class="btn-func">cos</button>
+      <button onclick="append('tan(')" class="btn-func">tan</button>
+      <button onclick="append('log(')" class="btn-func">log</button>
+      <button onclick="append('ln(')" class="btn-func">ln</button>
+
       <button onclick="append('π')">π</button>
       <button onclick="append('e')">e</button>
-
-      <button onclick="append('sin(')">sin</button>
-      <button onclick="append('cos(')">cos</button>
-      <button onclick="append('tan(')">tan</button>
-      <button onclick="append('^')">xʸ</button>
-      <button onclick="backspace()">←</button>
-
-      <button onclick="append('log(')">log</button>
-      <button onclick="append('ln(')">ln</button>
       <button onclick="append('√(')">√</button>
+      <button onclick="append('%')">%</button>
       <button onclick="append('/')">÷</button>
-      <button onclick="append('*')">×</button>
 
       <button onclick="append('7')">7</button>
       <button onclick="append('8')">8</button>
       <button onclick="append('9')">9</button>
-      <button onclick="append('-')">−</button>
-      <button onclick="append('+')">+</button>
+      <button onclick="append('*')">×</button>
+      <button onclick="append('!')">x!</button>
 
       <button onclick="append('4')">4</button>
       <button onclick="append('5')">5</button>
       <button onclick="append('6')">6</button>
+      <button onclick="append('-')">−</button>
+      <button onclick="toggleSign()">±</button>
+
       <button onclick="append('1')">1</button>
       <button onclick="append('2')">2</button>
-
       <button onclick="append('3')">3</button>
-      <button onclick="append('0')">0</button>
+      <button onclick="append('+')">+</button>
       <button onclick="append('.')">.</button>
-      <button onclick="calculate()" class="equal">=</button>
+
+      <button onclick="append('0')">0</button>
+      <button onclick="calculate()" class="btn-equal" style="grid-column: span 4">=</button>
     </div>
   </div>
 
@@ -118,8 +125,8 @@
     const display = document.getElementById("display");
 
     function append(value) {
-      if (value === 'π') value = Math.PI;
-      else if (value === 'e') value = Math.E;
+      if (value === 'π') value = Math.PI.toString();
+      if (value === 'e') value = Math.E.toString();
       display.value += value;
     }
 
@@ -131,10 +138,26 @@
       display.value = display.value.slice(0, -1);
     }
 
+    function toggleSign() {
+      if (display.value) {
+        if (display.value.startsWith('-')) {
+          display.value = display.value.slice(1);
+        } else {
+          display.value = '-' + display.value;
+        }
+      }
+    }
+
+    function factorial(n) {
+      if (n < 0) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= n; i++) result *= i;
+      return result;
+    }
+
     function calculate() {
       let expr = display.value
-        .replace(/π/g, Math.PI)
-        .replace(/e/g, Math.E)
         .replace(/√/g, 'Math.sqrt')
         .replace(/sin/g, 'Math.sin')
         .replace(/cos/g, 'Math.cos')
@@ -144,7 +167,14 @@
         .replace(/\^/g, '**');
 
       try {
-        let result = eval(expr);
+        // Handle factorials separately
+        while (expr.includes('!')) {
+          expr = expr.replace(/(\d+)!/, (match, number) => {
+            return factorial(Number(number));
+          });
+        }
+
+        const result = eval(expr);
         display.value = result;
       } catch (e) {
         display.value = "Error";
